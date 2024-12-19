@@ -7,7 +7,7 @@ import Config
 # Run `mix help test` for more information.
 config :promo_market, PromoMarket.Repo,
   username: "postgres",
-  password: "postgres",
+  password: "394ERoHWgveELK",
   hostname: "localhost",
   database: "promo_market_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
