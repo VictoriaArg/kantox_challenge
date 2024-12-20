@@ -3,7 +3,7 @@ defmodule PromoMarket.Market.Order do
   import Ecto.Changeset
 
   schema "orders" do
-    field :total, :integer
+    field :total, Money.Ecto.Amount.Type
     field :state, :string
     field :address, :string
     field :products, :map

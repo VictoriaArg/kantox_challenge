@@ -6,7 +6,7 @@ defmodule PromoMarket.Catalog.Product do
     field :code, :string
     field :name, :string
     field :description, :string
-    field :price, :integer
+    field :price, Money.Ecto.Amount.Type
     field :stock, :integer
     field :image_upload, :string
 
