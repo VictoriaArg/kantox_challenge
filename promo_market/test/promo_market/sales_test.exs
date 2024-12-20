@@ -75,6 +75,21 @@ defmodule PromoMarket.SalesTest do
       assert promo == Sales.get_promo!(promo.id)
     end
 
+    test "update_promo/2 with valid data returns active: false when expiration_date is today", %{
+      promo: promo
+    } do
+      today = DateTime.utc_now()
+      assert {:ok, promo} = Sales.update_promo(promo, %{expiration_date: today})
+      assert promo.active == false
+    end
+
+    test "update_promo/2 with valid data returns active: false when stock_limit is 0", %{
+      promo: promo
+    } do
+      assert {:ok, promo} = Sales.update_promo(promo, %{stock_limit: 0})
+      assert promo.active == false
+    end
+
     test "delete_promo/1 deletes the promo", %{promo: promo} do
       assert {:ok, %Promo{}} = Sales.delete_promo(promo)
       assert_raise Ecto.NoResultsError, fn -> Sales.get_promo!(promo.id) end
