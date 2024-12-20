@@ -3,10 +3,12 @@ defmodule PromoMarket.MarketFixtures do
   This module defines test helpers for creating
   entities via the `PromoMarket.Market` context.
   """
+  alias PromoMarket.Market.Order
 
   @doc """
   Generate a order.
   """
+  @spec order_fixture(map()) :: %Order{}
   def order_fixture(attrs \\ %{}) do
     {:ok, order} =
       attrs
@@ -15,7 +17,7 @@ defmodule PromoMarket.MarketFixtures do
         delivery_date: ~U[2024-12-19 05:50:00Z],
         products: %{},
         recipient: "some recipient",
-        state: "some state",
+        state: :created,
         total: 42
       })
       |> PromoMarket.Market.create_order()
