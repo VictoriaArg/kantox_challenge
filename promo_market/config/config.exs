@@ -62,7 +62,7 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :money,
-  default_currency: :EUR
+  default_currency: :GBP
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -4,10 +4,14 @@ defmodule PromoMarket.SalesFixtures do
   entities via the `PromoMarket.Sales` context.
   """
 
+  alias PromoMarket.CatalogFixtures
+
   @doc """
   Generate a promo.
   """
   def promo_fixture(attrs \\ %{}) do
+    product = CatalogFixtures.product_fixture()
+
     ten_days_after_today =
       DateTime.utc_now()
       |> DateTime.add(10, :day)
@@ -19,7 +23,8 @@ defmodule PromoMarket.SalesFixtures do
         discount_strategy: Enum.random(PromoMarket.Sales.DiscountStrategy.strategies_codes()),
         expiration_date: ten_days_after_today,
         name: "some name",
-        stock_limit: 42
+        stock_limit: 42,
+        product_id: product.id
       })
       |> PromoMarket.Sales.create_promo()
 

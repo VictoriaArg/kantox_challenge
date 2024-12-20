@@ -7,7 +7,7 @@ defmodule PromoMarket.Market.Order do
   @order_states [:created, :processed, :sent, :delivered]
 
   schema "orders" do
-    field :total, Money.Ecto.Amount.Type
+    field :total, Money.Ecto.Composite.Type
     field :state, Ecto.Enum, values: @order_states
     field :address, :string
     field :products, :map

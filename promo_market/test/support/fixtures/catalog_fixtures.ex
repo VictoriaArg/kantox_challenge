@@ -18,7 +18,7 @@ defmodule PromoMarket.CatalogFixtures do
         description: "test product description",
         image_upload: "test_image_upload",
         name: "test product",
-        price: Money.new(12, :EUR),
+        price: Money.new(12, :GBP),
         stock: 42
       })
       |> PromoMarket.Catalog.create_product()

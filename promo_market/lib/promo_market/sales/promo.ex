@@ -17,8 +17,22 @@ defmodule PromoMarket.Sales.Promo do
   @doc false
   def changeset(promo, attrs) do
     promo
-    |> cast(attrs, [:name, :active, :discount_strategy, :expiration_date, :stock_limit])
-    |> validate_required([:name, :active, :discount_strategy, :stock_limit, :expiration_date])
+    |> cast(attrs, [
+      :name,
+      :active,
+      :discount_strategy,
+      :expiration_date,
+      :stock_limit,
+      :product_id
+    ])
+    |> validate_required([
+      :name,
+      :active,
+      :discount_strategy,
+      :stock_limit,
+      :expiration_date,
+      :product_id
+    ])
     |> validate_inclusion(:discount_strategy, DiscountStrategy.strategies_codes())
     |> validate_number(:stock_limit, greater_than: -1)
     |> validate_stock_limit_update()

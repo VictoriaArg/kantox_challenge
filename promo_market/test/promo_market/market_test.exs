@@ -11,7 +11,7 @@ defmodule PromoMarket.MarketTest do
       order = order_fixture()
 
       invalid_attrs = %{
-        total: Money.new(-5, :EUR),
+        total: Money.new(-5, :GBP),
         state: :invalid_state,
         address: nil,
         products: nil,
@@ -32,7 +32,7 @@ defmodule PromoMarket.MarketTest do
 
     test "create_order/1 with valid data creates a order" do
       valid_attrs = %{
-        total: %Money{amount: 43, currency: :EUR},
+        total: %Money{amount: 43, currency: :GBP},
         state: :created,
         address: "some address",
         products: %{},
@@ -52,7 +52,7 @@ defmodule PromoMarket.MarketTest do
 
     test "update_order/2 with valid data updates the order", %{order: order} do
       update_attrs = %{
-        total: %Money{amount: 43, currency: :EUR},
+        total: %Money{amount: 43, currency: :GBP},
         state: :processed,
         address: "some updated address",
         products: %{},

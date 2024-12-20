@@ -18,7 +18,7 @@ defmodule PromoMarket.MarketFixtures do
         products: %{},
         recipient: "some recipient",
         state: :created,
-        total: 42
+        total: Money.new(32_11, :GBP)
       })
       |> PromoMarket.Market.create_order()
 

@@ -1,13 +1,12 @@
 defmodule PromoMarket.SalesTest do
   use PromoMarket.DataCase
 
+  import PromoMarket.SalesFixtures
   alias PromoMarket.Sales
+  alias PromoMarket.Sales.Promo
+  alias PromoMarket.CatalogFixtures
 
   describe "promos" do
-    alias PromoMarket.Sales.Promo
-
-    import PromoMarket.SalesFixtures
-
     setup do
       promo = promo_fixture()
 
@@ -33,12 +32,15 @@ defmodule PromoMarket.SalesTest do
     end
 
     test "create_promo/1 with valid data creates a promo", %{expiration_date: expiration_date} do
+      product = CatalogFixtures.product_fixture(%{name: "product for promo test", code: "FX2"})
+
       valid_attrs = %{
         active: true,
         name: "some name",
         discount_strategy: :buy_one_get_one_free,
         expiration_date: expiration_date,
-        stock_limit: 42
+        stock_limit: 42,
+        product_id: product.id
       }
 
       assert {:ok, %Promo{} = promo} = Sales.create_promo(valid_attrs)

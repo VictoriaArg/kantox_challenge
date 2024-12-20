@@ -15,7 +15,7 @@ defmodule PromoMarket.CatalogTest do
           code: "ASDF1234",
           name: nil,
           description: nil,
-          price: Money.new(0, :EUR),
+          price: Money.new(0, :GBP),
           stock: -4,
           image_upload: 45
         }
@@ -36,7 +36,7 @@ defmodule PromoMarket.CatalogTest do
         code: "QW123",
         name: "some name",
         description: "some description",
-        price: Money.new(2, :EUR),
+        price: Money.new(2_50, :GBP),
         stock: 42,
         image_upload: "some_image_upload"
       }
@@ -50,7 +50,7 @@ defmodule PromoMarket.CatalogTest do
         code: product.code,
         name: "some name",
         description: "some description",
-        price: Money.new(2, :EUR),
+        price: Money.new(2_50, :GBP),
         stock: 42,
         image_upload: "some_image_upload"
       }
@@ -70,7 +70,7 @@ defmodule PromoMarket.CatalogTest do
         code: "ZXC321",
         name: "some updated name",
         description: "some updated description",
-        price: Money.new(4, :EUR),
+        price: Money.new(4, :GBP),
         stock: 43,
         image_upload: "some_updated_image_upload"
       }
