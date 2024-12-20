@@ -5,65 +5,104 @@ defmodule PromoMarket.CatalogTest do
 
   describe "products" do
     alias PromoMarket.Catalog.Product
-
     import PromoMarket.CatalogFixtures
 
-    @invalid_attrs %{code: nil, name: nil, description: nil, price: nil, stock: nil, image_upload: nil}
-
-    test "list_products/0 returns all products" do
+    setup do
       product = product_fixture()
+
+      invalid_attrs =
+        %{
+          code: "ASDF1234",
+          name: nil,
+          description: nil,
+          price: Money.new(0, :EUR),
+          stock: -4,
+          image_upload: 45
+        }
+
+      %{product: product, invalid_attrs: invalid_attrs}
+    end
+
+    test "list_products/0 returns all products", %{product: product} do
       assert Catalog.list_products() == [product]
     end
 
-    test "get_product!/1 returns the product with given id" do
-      product = product_fixture()
+    test "get_product!/1 returns the product with given id", %{product: product} do
       assert Catalog.get_product!(product.id) == product
     end
 
     test "create_product/1 with valid data creates a product" do
-      valid_attrs = %{code: "some code", name: "some name", description: "some description", price: 42, stock: 42, image_upload: "some image_upload"}
+      valid_attrs = %{
+        code: "QW123",
+        name: "some name",
+        description: "some description",
+        price: Money.new(2, :EUR),
+        stock: 42,
+        image_upload: "some_image_upload"
+      }
 
       assert {:ok, %Product{} = product} = Catalog.create_product(valid_attrs)
-      assert product.code == "some code"
-      assert product.name == "some name"
-      assert product.description == "some description"
-      assert product.price == 42
-      assert product.stock == 42
-      assert product.image_upload == "some image_upload"
+      assert_product_fields(product, valid_attrs)
     end
 
-    test "create_product/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Catalog.create_product(@invalid_attrs)
+    test "product code must be unique", %{product: product} do
+      new_attrs = %{
+        code: product.code,
+        name: "some name",
+        description: "some description",
+        price: Money.new(2, :EUR),
+        stock: 42,
+        image_upload: "some_image_upload"
+      }
+
+      assert {:error, %Ecto.Changeset{errors: [code: {"has already been taken", _}]}} =
+               Catalog.create_product(new_attrs)
     end
 
-    test "update_product/2 with valid data updates the product" do
-      product = product_fixture()
-      update_attrs = %{code: "some updated code", name: "some updated name", description: "some updated description", price: 43, stock: 43, image_upload: "some updated image_upload"}
+    test "create_product/1 with invalid data returns error changeset", %{
+      invalid_attrs: invalid_attrs
+    } do
+      assert {:error, %Ecto.Changeset{}} = Catalog.create_product(invalid_attrs)
+    end
+
+    test "update_product/2 with valid data updates the product", %{product: product} do
+      update_attrs = %{
+        code: "ZXC321",
+        name: "some updated name",
+        description: "some updated description",
+        price: Money.new(4, :EUR),
+        stock: 43,
+        image_upload: "some_updated_image_upload"
+      }
 
       assert {:ok, %Product{} = product} = Catalog.update_product(product, update_attrs)
-      assert product.code == "some updated code"
-      assert product.name == "some updated name"
-      assert product.description == "some updated description"
-      assert product.price == 43
-      assert product.stock == 43
-      assert product.image_upload == "some updated image_upload"
+      assert_product_fields(product, update_attrs)
     end
 
-    test "update_product/2 with invalid data returns error changeset" do
-      product = product_fixture()
-      assert {:error, %Ecto.Changeset{}} = Catalog.update_product(product, @invalid_attrs)
+    test "update_product/2 with invalid data returns error changeset", %{
+      product: product,
+      invalid_attrs: invalid_attrs
+    } do
+      assert {:error, %Ecto.Changeset{}} = Catalog.update_product(product, invalid_attrs)
       assert product == Catalog.get_product!(product.id)
     end
 
-    test "delete_product/1 deletes the product" do
-      product = product_fixture()
+    test "delete_product/1 deletes the product", %{product: product} do
       assert {:ok, %Product{}} = Catalog.delete_product(product)
       assert_raise Ecto.NoResultsError, fn -> Catalog.get_product!(product.id) end
     end
 
-    test "change_product/1 returns a product changeset" do
-      product = product_fixture()
+    test "change_product/1 returns a product changeset", %{product: product} do
       assert %Ecto.Changeset{} = Catalog.change_product(product)
     end
+  end
+
+  defp assert_product_fields(product, attrs) do
+    assert product.code == attrs.code
+    assert product.name == attrs.name
+    assert product.description == attrs.description
+    assert product.price == attrs.price
+    assert product.stock == attrs.stock
+    assert product.image_upload == attrs.image_upload
   end
 end
