@@ -1,4 +1,7 @@
 defmodule PromoMarket.Market.Order do
+  @moduledoc """
+  Orders are for purchases data and are created once confirming a basket.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

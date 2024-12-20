@@ -1,4 +1,7 @@
 defmodule PromoMarket.Catalog.Product do
+  @moduledoc """
+  Products data for sales and market operation.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

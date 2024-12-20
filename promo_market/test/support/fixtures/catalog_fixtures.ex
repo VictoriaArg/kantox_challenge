@@ -9,7 +9,7 @@ defmodule PromoMarket.CatalogFixtures do
   @doc """
   Generate a product.
   """
-  @spec product_fixture(map()) :: %Product{}
+  @spec product_fixture(map()) :: Product.t()
   def product_fixture(attrs \\ %{}) do
     {:ok, product} =
       attrs

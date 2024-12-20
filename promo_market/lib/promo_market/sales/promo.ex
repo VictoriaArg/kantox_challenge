@@ -1,4 +1,8 @@
 defmodule PromoMarket.Sales.Promo do
+  @moduledoc """
+  Promo is a struct for data related to discounts applied to products.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
   alias PromoMarket.Sales.DiscountStrategy

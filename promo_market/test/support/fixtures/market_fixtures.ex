@@ -8,7 +8,7 @@ defmodule PromoMarket.MarketFixtures do
   @doc """
   Generate a order.
   """
-  @spec order_fixture(map()) :: %Order{}
+  @spec order_fixture(map()) :: Order.t()
   def order_fixture(attrs \\ %{}) do
     {:ok, order} =
       attrs
