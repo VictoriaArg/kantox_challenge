@@ -1,0 +1,30 @@
+<.header>
+  Promo {@promo.id}
+  <:subtitle>This is a promo record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/promos/#{@promo}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit promo</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name">{@promo.name}</:item>
+  <:item title="Active">{@promo.active}</:item>
+  <:item title="Discount strategy">{@promo.discount_strategy}</:item>
+  <:item title="Expiration date">{@promo.expiration_date}</:item>
+  <:item title="Stock limit">{@promo.stock_limit}</:item>
+</.list>
+
+<.back navigate={~p"/promos"}>Back to promos</.back>
+
+<.modal :if={@live_action == :edit} id="promo-modal" show on_cancel={JS.patch(~p"/promos/#{@promo}")}>
+  <.live_component
+    module={PromoMarketWeb.PromoLive.FormComponent}
+    id={@promo.id}
+    title={@page_title}
+    action={@live_action}
+    promo={@promo}
+    patch={~p"/promos/#{@promo}"}
+  />
+</.modal>
