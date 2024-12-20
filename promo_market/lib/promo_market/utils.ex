@@ -3,7 +3,7 @@ defmodule PromoMarket.Utils do
   This module defines utility functions. When the project grows this module can be separated
   into specific utils modules.
   """
-  import Ecto.Changeset
+  alias Ecto.Changeset
 
   @spec validate_money(Changeset.t(), atom()) :: Changeset.t() | list()
   def validate_money(changeset, field) do
