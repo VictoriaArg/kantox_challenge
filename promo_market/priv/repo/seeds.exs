@@ -51,23 +51,26 @@ promos = [
     discount_strategy: :buy_one_get_one_free,
     expiration_date: expiration_date,
     stock_limit: 200,
-    product_id: green_tea.id
+    product_id: green_tea.id,
+    min_units: 1
   },
   %{
     name: "challenge_promo",
     active: true,
-    discount_strategy: :bulk_purchase_price_drop,
+    discount_strategy: :bulk_fixed_price_drop,
     expiration_date: expiration_date,
     stock_limit: 200,
-    product_id: strawberry.id
+    product_id: strawberry.id,
+    min_units: 3
   },
   %{
     name: "challenge_promo",
     active: true,
-    discount_strategy: :bulk_purchase_price_drop,
+    discount_strategy: :bulk_percentage_price_drop,
     expiration_date: expiration_date,
     stock_limit: 200,
-    product_id: coffee.id
+    product_id: coffee.id,
+    min_units: 3
   }
 ]
 

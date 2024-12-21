@@ -40,7 +40,8 @@ defmodule PromoMarket.SalesTest do
         discount_strategy: :buy_one_get_one_free,
         expiration_date: expiration_date,
         stock_limit: 42,
-        product_id: product.id
+        product_id: product.id,
+        min_units: 1
       }
 
       assert {:ok, %Promo{} = promo} = Sales.create_promo(valid_attrs)

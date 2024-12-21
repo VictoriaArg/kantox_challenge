@@ -14,6 +14,7 @@ defmodule PromoMarket.Sales.Promo do
     field :expiration_date, :utc_datetime
     field :stock_limit, :integer
     field :product_id, :id
+    field :min_units, :integer
 
     timestamps(type: :utc_datetime)
   end
@@ -27,7 +28,8 @@ defmodule PromoMarket.Sales.Promo do
       :discount_strategy,
       :expiration_date,
       :stock_limit,
-      :product_id
+      :product_id,
+      :min_units
     ])
     |> validate_required([
       :name,
@@ -35,10 +37,12 @@ defmodule PromoMarket.Sales.Promo do
       :discount_strategy,
       :stock_limit,
       :expiration_date,
-      :product_id
+      :product_id,
+      :min_units
     ])
     |> validate_inclusion(:discount_strategy, DiscountStrategy.strategies_codes())
     |> validate_number(:stock_limit, greater_than: -1)
+    |> validate_number(:min_units, greater_than: 0)
     |> validate_stock_limit_update()
     |> validate_expiration_date_update()
   end

@@ -24,7 +24,8 @@ defmodule PromoMarket.SalesFixtures do
         expiration_date: ten_days_after_today,
         name: "some name",
         stock_limit: 42,
-        product_id: product.id
+        product_id: product.id,
+        min_units: 1
       })
       |> PromoMarket.Sales.create_promo()
 
