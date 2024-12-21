@@ -8,9 +8,19 @@ defmodule PromoMarket.Market.Order do
   alias PromoMarket.Utils
 
   @order_states [:created, :processed, :sent, :delivered]
+  @order_fields [
+    :products,
+    :total,
+    :total_with_discount,
+    :state,
+    :recipient,
+    :address,
+    :delivery_date
+  ]
 
   schema "orders" do
     field :total, Money.Ecto.Composite.Type
+    field :total_with_discount, Money.Ecto.Composite.Type
     field :state, Ecto.Enum, values: @order_states
     field :address, :string
     field :products, :map
@@ -23,9 +33,11 @@ defmodule PromoMarket.Market.Order do
   @doc false
   def changeset(order, attrs) do
     order
-    |> cast(attrs, [:products, :total, :state, :recipient, :address, :delivery_date])
-    |> validate_required([:total, :state, :recipient, :address, :delivery_date])
+    |> cast(attrs, @order_fields)
+    |> validate_required(@order_fields)
     |> validate_inclusion(:state, @order_states)
+    |> Utils.validate_not_empty_map(:products)
     |> Utils.validate_money(:total)
+    |> Utils.validate_money(:total_with_discount)
   end
 end

@@ -12,9 +12,10 @@ defmodule PromoMarket.MarketTest do
 
       invalid_attrs = %{
         total: Money.new(-5, :GBP),
+        total_with_discount: Money.new(-12, :GBP),
         state: :invalid_state,
         address: nil,
-        products: nil,
+        products: %{},
         recipient: nil,
         delivery_date: nil
       }
@@ -33,9 +34,10 @@ defmodule PromoMarket.MarketTest do
     test "create_order/1 with valid data creates a order" do
       valid_attrs = %{
         total: %Money{amount: 43, currency: :GBP},
+        total_with_discount: %Money{amount: 43, currency: :GBP},
         state: :created,
         address: "some address",
-        products: %{},
+        products: %{{"FDS67", 1}},
         recipient: "some recipient",
         delivery_date: DateTime.utc_now()
       }
@@ -53,9 +55,10 @@ defmodule PromoMarket.MarketTest do
     test "update_order/2 with valid data updates the order", %{order: order} do
       update_attrs = %{
         total: %Money{amount: 43, currency: :GBP},
+        total_with_discount: %Money{amount: 129, currency: :GBP},
         state: :processed,
         address: "some updated address",
-        products: %{},
+        products: %{{"FDS67", 3}},
         recipient: "some updated recipient",
         delivery_date: DateTime.utc_now()
       }
@@ -84,6 +87,7 @@ defmodule PromoMarket.MarketTest do
 
   defp assert_order_fields(order, attrs) do
     assert order.total == attrs.total
+    assert order.total_with_discount == attrs.total_with_discount
     assert order.state == attrs.state
     assert order.address == attrs.address
     assert order.products == attrs.products
