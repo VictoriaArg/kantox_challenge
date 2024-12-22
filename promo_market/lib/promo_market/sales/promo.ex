@@ -5,7 +5,7 @@ defmodule PromoMarket.Sales.Promo do
 
   use Ecto.Schema
   import Ecto.{Changeset, Query}
-  alias PromoMarket.Sales.DiscountStrategy
+  alias PromoMarket.Sales.{DiscountStrategy, Promo}
 
   @promo_fields [
     :name,
@@ -28,7 +28,7 @@ defmodule PromoMarket.Sales.Promo do
   end
 
   @doc false
-  def changeset(promo, attrs) do
+  def changeset(promo, attrs \\ %{}) do
     promo
     |> cast(attrs, @promo_fields)
     |> validate_required(@promo_fields)

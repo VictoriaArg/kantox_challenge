@@ -21,7 +21,7 @@ defmodule PromoMarket.Catalog.Product do
   end
 
   @doc false
-  def changeset(product, attrs) do
+  def changeset(product, attrs \\ %{}) do
     product
     |> cast(attrs, [:name, :code, :price, :stock, :description, :image_upload])
     |> validate_required([:name, :code, :price, :stock])
