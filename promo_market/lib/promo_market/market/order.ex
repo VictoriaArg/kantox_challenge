@@ -31,7 +31,7 @@ defmodule PromoMarket.Market.Order do
   end
 
   @doc false
-  def changeset(order, attrs) do
+  def changeset(order, attrs \\ %{}) do
     order
     |> cast(attrs, @order_fields)
     |> validate_required(@order_fields)

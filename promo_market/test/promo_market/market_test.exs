@@ -1,12 +1,11 @@
 defmodule PromoMarket.MarketTest do
   use PromoMarket.DataCase
 
+  import PromoMarket.MarketFixtures
   alias PromoMarket.Market
+  alias PromoMarket.Market.{Basket, BasketItem, Order}
 
   describe "orders" do
-    alias PromoMarket.Market.Order
-    import PromoMarket.MarketFixtures
-
     setup do
       order = order_fixture()
 
@@ -82,6 +81,97 @@ defmodule PromoMarket.MarketTest do
 
     test "change_order/1 returns a order changeset", %{order: order} do
       assert %Ecto.Changeset{} = Market.change_order(order)
+    end
+  end
+
+  describe "baskets" do
+    setup do
+      %{
+        attrs: %{
+          products: %{{"ASW", 2}, {"QA1", 1}, {"OL", 1}},
+          total: Money.new(22_3, :GBP),
+          total_with_discount: Money.new(20_3, :GBP)
+        }
+      }
+    end
+
+    test "new_basket/2 does not support creating empty baskets" do
+      assert {:error, _} = Market.new_basket(%{})
+    end
+
+    test "new_basket/2 creates a filled basket", %{attrs: attrs} do
+      basket = %Basket{
+        products: attrs.products,
+        total: attrs.total,
+        total_with_discount: attrs.total_with_discount
+      }
+
+      {:ok, new_basket} = Market.new_basket(attrs)
+
+      assert basket == new_basket
+    end
+
+    test "validate_basket/2 creates a changeset from a basket and attributes", %{attrs: attrs} do
+      {:ok, new_basket} = Market.new_basket(attrs)
+      assert %Ecto.Changeset{data: %Basket{}} = Market.validate_basket(new_basket)
+    end
+
+    test "order_changeset_from_basket/2 creates an order changeset from a basket struct" do
+      order_attrs = %{
+        state: :created,
+        address: "some address",
+        recipient: "some recipient",
+        delivery_date: DateTime.utc_now()
+      }
+
+      {:ok, basket} =
+        Market.new_basket(%{
+          total: %Money{amount: 43, currency: :GBP},
+          total_with_discount: %Money{amount: 43, currency: :GBP},
+          products: %{{"FDS67", 1}}
+        })
+
+      order_changeset = Market.order_changeset_from_basket(basket, order_attrs)
+
+      assert %Ecto.Changeset{data: %Order{}} = order_changeset
+      assert_order_fields(order_changeset.changes, Map.merge(basket, order_attrs))
+    end
+  end
+
+  describe "basket items" do
+    test "validate_basket_item/2 creates a changeset from a basket item and attributes" do
+      valid_attrs = %{
+        amount: 2,
+        total: Money.new(100, :GBP),
+        total_with_discount: Money.new(90, :GBP)
+      }
+
+      {:ok, basket_item} = Market.new_basket_item(valid_attrs)
+      assert %Ecto.Changeset{data: %BasketItem{}} = Market.validate_basket_item(basket_item)
+    end
+
+    test "new_basket_item/2 creates a filled basket item" do
+      attrs = %{
+        amount: 2,
+        total: Money.new(100, :GBP),
+        total_with_discount: Money.new(90, :GBP)
+      }
+
+      {:ok, basket_item} = Market.new_basket_item(attrs)
+
+      assert basket_item.amount == attrs.amount
+      assert basket_item.total == attrs.total
+      assert basket_item.total_with_discount == attrs.total_with_discount
+    end
+
+    test "new_basket_item/2 does not support invalid attributes" do
+      invalid_attrs = %{
+        amount: 0,
+        total: Money.new(-10, :GBP),
+        total_with_discount: Money.new(-5, :GBP)
+      }
+
+      assert {:error, _changeset} = Market.new_basket_item(invalid_attrs)
     end
   end
 
