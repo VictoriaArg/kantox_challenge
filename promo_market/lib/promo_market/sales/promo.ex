@@ -4,8 +4,17 @@ defmodule PromoMarket.Sales.Promo do
   """
 
   use Ecto.Schema
-  import Ecto.Changeset
+  import Ecto.{Changeset, Query}
   alias PromoMarket.Sales.DiscountStrategy
+
+  @promo_fields [
+    :name,
+    :active,
+    :discount_strategy,
+    :expiration_date,
+    :product_id,
+    :min_units
+  ]
 
   schema "promos" do
     field :active, :boolean, default: false
@@ -21,22 +30,8 @@ defmodule PromoMarket.Sales.Promo do
   @doc false
   def changeset(promo, attrs) do
     promo
-    |> cast(attrs, [
-      :name,
-      :active,
-      :discount_strategy,
-      :expiration_date,
-      :product_id,
-      :min_units
-    ])
-    |> validate_required([
-      :name,
-      :active,
-      :discount_strategy,
-      :expiration_date,
-      :product_id,
-      :min_units
-    ])
+    |> cast(attrs, @promo_fields)
+    |> validate_required(@promo_fields)
     |> validate_inclusion(:discount_strategy, DiscountStrategy.strategies_codes())
     |> validate_number(:min_units, greater_than: 0)
     |> validate_expiration_date_update()
@@ -52,5 +47,14 @@ defmodule PromoMarket.Sales.Promo do
     else
       changeset
     end
+  end
+
+  @doc """
+  Returns a query to find the active promo for a given product ID.
+  """
+  @spec active_promo_query(integer()) :: Ecto.Query.t()
+  def active_promo_query(product_id) do
+    from p in Promo,
+      where: p.product_id == ^product_id and p.active == true
   end
 end

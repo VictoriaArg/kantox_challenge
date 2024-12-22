@@ -7,7 +7,7 @@ defmodule PromoMarket.SalesFixtures do
   alias PromoMarket.CatalogFixtures
 
   @doc """
-  Generate a promo.
+  Generates a promo.
   """
   def promo_fixture(attrs \\ %{}) do
     product = CatalogFixtures.product_fixture()
