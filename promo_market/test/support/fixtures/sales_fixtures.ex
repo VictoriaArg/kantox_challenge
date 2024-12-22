@@ -23,7 +23,6 @@ defmodule PromoMarket.SalesFixtures do
         discount_strategy: Enum.random(PromoMarket.Sales.DiscountStrategy.strategies_codes()),
         expiration_date: ten_days_after_today,
         name: "some name",
-        stock_limit: 42,
         product_id: product.id,
         min_units: 1
       })

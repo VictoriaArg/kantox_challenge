@@ -12,7 +12,6 @@ defmodule PromoMarket.Sales.Promo do
     field :name, :string
     field :discount_strategy, Ecto.Enum, values: DiscountStrategy.strategies_codes()
     field :expiration_date, :utc_datetime
-    field :stock_limit, :integer
     field :product_id, :id
     field :min_units, :integer
 
@@ -27,7 +26,6 @@ defmodule PromoMarket.Sales.Promo do
       :active,
       :discount_strategy,
       :expiration_date,
-      :stock_limit,
       :product_id,
       :min_units
     ])
@@ -35,25 +33,13 @@ defmodule PromoMarket.Sales.Promo do
       :name,
       :active,
       :discount_strategy,
-      :stock_limit,
       :expiration_date,
       :product_id,
       :min_units
     ])
     |> validate_inclusion(:discount_strategy, DiscountStrategy.strategies_codes())
-    |> validate_number(:stock_limit, greater_than: -1)
     |> validate_number(:min_units, greater_than: 0)
-    |> validate_stock_limit_update()
     |> validate_expiration_date_update()
-  end
-
-  defp validate_stock_limit_update(changeset) do
-    if get_change(changeset, :stock_limit) == 0 do
-      changeset
-      |> put_change(:active, false)
-    else
-      changeset
-    end
   end
 
   defp validate_expiration_date_update(changeset) do

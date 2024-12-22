@@ -14,8 +14,7 @@ defmodule PromoMarket.SalesTest do
         active: true,
         name: "some name",
         discount_strategy: :some_discount_strategy,
-        expiration_date: nil,
-        stock_limit: -4
+        expiration_date: nil
       }
 
       expiration_date = DateTime.utc_now() |> DateTime.add(10, :day)
@@ -39,7 +38,6 @@ defmodule PromoMarket.SalesTest do
         name: "some name",
         discount_strategy: :buy_one_get_one_free,
         expiration_date: expiration_date,
-        stock_limit: 42,
         product_id: product.id,
         min_units: 1
       }
@@ -62,8 +60,7 @@ defmodule PromoMarket.SalesTest do
         active: false,
         name: "some updated name",
         discount_strategy: :buy_one_get_one_free,
-        expiration_date: expiration_date,
-        stock_limit: 42
+        expiration_date: expiration_date
       }
 
       assert {:ok, %Promo{} = promo} = Sales.update_promo(promo, update_attrs)
@@ -86,13 +83,6 @@ defmodule PromoMarket.SalesTest do
       assert promo.active == false
     end
 
-    test "update_promo/2 with valid data returns active: false when stock_limit is 0", %{
-      promo: promo
-    } do
-      assert {:ok, promo} = Sales.update_promo(promo, %{stock_limit: 0})
-      assert promo.active == false
-    end
-
     test "delete_promo/1 deletes the promo", %{promo: promo} do
       assert {:ok, %Promo{}} = Sales.delete_promo(promo)
       assert_raise Ecto.NoResultsError, fn -> Sales.get_promo!(promo.id) end
@@ -107,7 +97,6 @@ defmodule PromoMarket.SalesTest do
     assert promo.active == attrs.active
     assert promo.name == attrs.name
     assert promo.discount_strategy == attrs.discount_strategy
-    assert promo.stock_limit == attrs.stock_limit
 
     assert DateTime.truncate(promo.expiration_date, :second) ==
              DateTime.truncate(attrs.expiration_date, :second)
