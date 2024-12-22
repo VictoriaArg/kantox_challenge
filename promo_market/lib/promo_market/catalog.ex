@@ -38,6 +38,22 @@ defmodule PromoMarket.Catalog do
   def get_product!(id), do: Repo.get!(Product, id)
 
   @doc """
+  Gets a single product by its code
+
+  Raises `Ecto.NoResultsError` if the Product does not exist.
+
+  ## Examples
+
+      iex> get_product!("ASD123")
+      %Product{}
+
+      iex> get_product!("NO34")
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_product_by_code(code) when is_binary(code), do: Repo.get_by!(Product, code: code)
+
+  @doc """
   Creates a product.
 
   ## Examples

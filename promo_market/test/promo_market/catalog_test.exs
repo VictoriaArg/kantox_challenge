@@ -59,6 +59,10 @@ defmodule PromoMarket.CatalogTest do
                Catalog.create_product(new_attrs)
     end
 
+    test "get_product_by_code/1", %{product: product} do
+      assert Catalog.get_product_by_code(product.code) == product
+    end
+
     test "create_product/1 with invalid data returns error changeset", %{
       invalid_attrs: invalid_attrs
     } do
