@@ -4,7 +4,7 @@ defmodule PromoMarket.Checkout do
   """
 
   alias PromoMarket.Market
-  alias PromoMarket.Market.{Basket, BasketItem}
+  alias PromoMarket.Market.BasketItem
   alias PromoMarket.Sales
   alias PromoMarket.Sales.DiscountStrategy
 

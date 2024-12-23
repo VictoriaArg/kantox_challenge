@@ -16,8 +16,8 @@ defmodule PromoMarketWeb.Router do
 
   scope "/", PromoMarketWeb do
     pipe_through :browser
-
-    get "/", PageController, :home
+    live "/", ProductLive.Index, :index
+    live "/new_order", ProductLive.Index, :new
   end
 
   # Other scopes may use custom stacks.

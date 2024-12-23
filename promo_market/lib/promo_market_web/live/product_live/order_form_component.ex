@@ -8,11 +8,11 @@ defmodule PromoMarketWeb.OrderLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        {@title}
+        <%!-- {@title} --%> Order Form
         <:subtitle>Use this form to manage order records in your database.</:subtitle>
       </.header>
 
-      <.simple_form
+      <%!-- <.simple_form
         for={@form}
         id="order-form"
         phx-target={@myself}
@@ -27,19 +27,24 @@ defmodule PromoMarketWeb.OrderLive.FormComponent do
         <:actions>
           <.button phx-disable-with="Saving...">Save Order</.button>
         </:actions>
-      </.simple_form>
+      </.simple_form> --%>
     </div>
     """
   end
 
+  # @impl true
+  # def update(%{order: order} = assigns, socket) do
+  #   {:ok,
+  #    socket
+  #    |> assign(assigns)
+  #    |> assign_new(:form, fn ->
+  #      to_form(Market.change_order(order))
+  #    end)}
+  # end
+
   @impl true
-  def update(%{order: order} = assigns, socket) do
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign_new(:form, fn ->
-       to_form(Market.change_order(order))
-     end)}
+  def update(_, socket) do
+    {:ok, socket}
   end
 
   @impl true
@@ -50,21 +55,6 @@ defmodule PromoMarketWeb.OrderLive.FormComponent do
 
   def handle_event("save", %{"order" => order_params}, socket) do
     save_order(socket, socket.assigns.action, order_params)
-  end
-
-  defp save_order(socket, :edit, order_params) do
-    case Market.update_order(socket.assigns.order, order_params) do
-      {:ok, order} ->
-        notify_parent({:saved, order})
-
-        {:noreply,
-         socket
-         |> put_flash(:info, "Order updated successfully")
-         |> push_patch(to: socket.assigns.patch)}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
-    end
   end
 
   defp save_order(socket, :new, order_params) do
