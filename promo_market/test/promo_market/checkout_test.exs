@@ -4,6 +4,7 @@ defmodule PromoMarket.CheckoutTest do
   alias PromoMarket.Catalog
   alias PromoMarket.Checkout
   alias PromoMarket.Sales
+  alias PromoMarket.Market
   alias PromoMarket.Market.{BasketItem, Basket}
   alias Money
 
@@ -93,13 +94,20 @@ defmodule PromoMarket.CheckoutTest do
     }
   end
 
-  describe "process_item/1" do
+  describe "process_basket_item/1" do
     test "processes an item and applies promo to products with promo", %{
       products: products
     } do
       for product <- products do
-        params = %{product_id: product.id, amount: 3, price: product.price}
-        assert {:ok, %BasketItem{} = item} = Checkout.process_item(params)
+        {:ok, basket_item} =
+          Market.new_basket_item(%{
+            product_id: product.id,
+            name: product.name,
+            amount: 3,
+            price: product.price
+          })
+
+        assert %BasketItem{} = item = Checkout.process_basket_item(basket_item)
 
         case product.code do
           ## should not apply any discount
@@ -123,7 +131,7 @@ defmodule PromoMarket.CheckoutTest do
           ## amount increases by 1
           "GR1" ->
             assert item.amount == 4
-            assert item.total == Money.new(933, :GBP)
+            assert item.total == Money.new(1244, :GBP)
             assert item.total_with_discount == Money.new(933, :GBP)
         end
       end
@@ -246,7 +254,7 @@ defmodule PromoMarket.CheckoutTest do
         ] do
       test "process_basket_from_items/1 processes a basket from items for test data: #{test_data}" do
         items = unquote(items)
-        assert {:ok, basket} = Checkout.process_basket_from_items(items)
+        assert %Basket{} = basket = Checkout.process_basket_from_items(items)
         expected_basket = unquote(expected_basket)
         assert basket == expected_basket
       end

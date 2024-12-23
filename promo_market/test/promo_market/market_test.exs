@@ -2,6 +2,7 @@ defmodule PromoMarket.MarketTest do
   use PromoMarket.DataCase
 
   import PromoMarket.MarketFixtures
+  import PromoMarket.CatalogFixtures
   alias PromoMarket.Market
   alias PromoMarket.Market.{Basket, BasketItem, Order}
 
@@ -139,29 +140,34 @@ defmodule PromoMarket.MarketTest do
   end
 
   describe "basket items" do
-    test "validate_basket_item/2 creates a changeset from a basket item and attributes" do
-      valid_attrs = %{
-        amount: 2,
-        total: Money.new(100, :GBP),
-        total_with_discount: Money.new(90, :GBP)
-      }
+    setup do
+      product = product_fixture()
 
+      %{
+        valid_attrs: %{
+          product_id: product.id,
+          name: product.name,
+          price: product.price,
+          amount: 1,
+          total: product.price,
+          total_with_discount: product.price
+        }
+      }
+    end
+
+    test "validate_basket_item/2 creates a changeset from a basket item and attributes", %{
+      valid_attrs: valid_attrs
+    } do
       {:ok, basket_item} = Market.new_basket_item(valid_attrs)
       assert %Ecto.Changeset{data: %BasketItem{}} = Market.validate_basket_item(basket_item)
     end
 
-    test "new_basket_item/2 creates a filled basket item" do
-      attrs = %{
-        amount: 2,
-        total: Money.new(100, :GBP),
-        total_with_discount: Money.new(90, :GBP)
-      }
+    test "new_basket_item/2 creates a filled basket item", %{valid_attrs: valid_attrs} do
+      {:ok, basket_item} = Market.new_basket_item(valid_attrs)
 
-      {:ok, basket_item} = Market.new_basket_item(attrs)
-
-      assert basket_item.amount == attrs.amount
-      assert basket_item.total == attrs.total
-      assert basket_item.total_with_discount == attrs.total_with_discount
+      assert basket_item.amount == valid_attrs.amount
+      assert basket_item.total == valid_attrs.total
+      assert basket_item.total_with_discount == valid_attrs.total_with_discount
     end
 
     test "new_basket_item/2 does not support invalid attributes" do
