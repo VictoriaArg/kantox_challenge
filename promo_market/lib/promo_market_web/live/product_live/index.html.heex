@@ -10,7 +10,7 @@
       <:col :let={{_id, product}} label="Price">{product.price}</:col>
       <:col :let={{_id, product}} label="Stock">{product.stock}</:col>
       <:col :let={{_id, product}} label="Description">{product.description}</:col>
-      <:col :let={{_id, product}} label="Image upload">
+      <:col :let={{_id, product}} label="Image">
         <img class="w-12 h-auto" src={product.image_upload} />
       </:col>
       <:action :let={{_id, product}}>
@@ -38,29 +38,50 @@
         </div>
       </:action>
     </.table>
-    <%!-- <.link patch={~p"/new_order"}>
-  <.button>New Order</.button>
-</.link> --%>
   </div>
-  <div id="basket-section" class="w-[40%]">
-    <%= for {_code, item} <- @basket_items do %>
-      <p>{item.name}</p>
-      <p>{item.amount}</p>
-      TOTAL
-      <p>{item.total}</p>
-      TOTAL CON DESCUENTO
-      <p>{item.total_with_discount}</p>
-      <p>{item.applied_promo}</p>
+  <div
+    id="basket-container"
+    class="w-[40%] flex flex-col items-start justify-between bg-slate-100 rounded-2xl p-12"
+  >
+    <p class="leading-4">Here you will see your added products</p>
+    <div id="basket-items">
+      <%= for {_code, item} <- @basket_items do %>
+        <p class="font-bold leading-6 mt-4 mb-2">{item.name}: ({item.amount})</p>
+        Total:
+        <p class="inline">{item.total}</p>
+        <%= if !is_nil(item.applied_promo) do %>
+          <div class="mt-2 leading-6">
+            <p class="text-emerald-700">Promo applied!</p>
+            <p class="font-semibold inline">Total with discount:</p>
+            <p class="inline font-semibold leading-6 text-emerald-700">
+              {item.total_with_discount}
+            </p>
+            <div>
+              Promo code:
+              <p class="inline italic">{item.applied_promo}</p>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <%= if !is_nil(@basket) && !Money.zero?(@basket.total) do %>
+      <div id="basket" class="mt-6 pt-2 border-slate-200 border-t-2 w-full">
+        <p class="font-bold leading-6 mt-4 mb-2">Total items: {map_size(@basket.products)}</p>
+        Total:
+        <p class="inline leading-6 font-bold mb-2">{@basket.total}</p>
+        <div class="mb-6">
+          <%= if !Money.zero?(Money.subtract(@basket.total, @basket.total_with_discount)) do %>
+            Total with dicount:
+            <p class="inline font-semibold leading-6 text-emerald-700">
+              {@basket.total_with_discount}
+            </p>
+          <% end %>
+        </div>
+        <.button phx-click="create_new_order">Create new order</.button>
+      </div>
     <% end %>
   </div>
 </div>
-<.modal :if={@live_action in [:new]} id="order-modal" show on_cancel={JS.patch(~p"/")}>
-  <.live_component
-    module={PromoMarketWeb.OrderLive.FormComponent}
-    id={@product.id || :new}
-    title={@page_title}
-    action={@live_action}
-    product={@product}
-    patch={~p"/"}
-  />
+<.modal :if={@create_new_order} id="order-modal" show on_cancel={JS.navigate(~p"/")}>
+  <.live_component module={PromoMarketWeb.OrderLive.FormComponent} id="order-form" />
 </.modal>

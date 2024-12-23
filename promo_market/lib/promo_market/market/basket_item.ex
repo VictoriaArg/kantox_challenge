@@ -13,9 +13,13 @@ defmodule PromoMarket.Market.BasketItem do
   @other_fields [:total, :total_with_discount, :applied_promo]
 
   @type t() :: %__MODULE__{
+          product_id: integer(),
+          name: String.t(),
+          price: Money.t(),
           amount: integer(),
           total: Money.t(),
-          total_with_discount: Money.t()
+          total_with_discount: Money.t(),
+          applied_promo: atom() | nil
         }
 
   @primary_key false

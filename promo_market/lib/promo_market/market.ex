@@ -133,7 +133,7 @@ defmodule PromoMarket.Market do
 
   """
   def new_basket(attrs) do
-    changeset = validate_basket(attrs)
+    changeset = validate_basket(%Basket{}, attrs)
 
     case changeset.valid? do
       true -> {:ok, Changeset.apply_changes(changeset)}
@@ -171,7 +171,7 @@ defmodule PromoMarket.Market do
       %Ecto.Changeset{data: %Basket{}}
 
   """
-  def validate_basket(%Basket{} = basket, attrs \\ %{}) do
+  def validate_basket(basket, attrs \\ %{}) do
     Basket.changeset(basket, attrs)
   end
 

@@ -5,7 +5,6 @@ defmodule PromoMarket.Market.Basket do
   """
   use Ecto.Schema
   import Ecto.Changeset
-  alias PromoMarket.Utils
 
   @basket_fields [:products, :total, :total_with_discount]
 
@@ -29,7 +28,5 @@ defmodule PromoMarket.Market.Basket do
     basket
     |> cast(attrs, @basket_fields)
     |> validate_required(@basket_fields)
-    |> Utils.validate_money(:total)
-    |> Utils.validate_money(:total_with_discount)
   end
 end

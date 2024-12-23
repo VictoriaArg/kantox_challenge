@@ -11,6 +11,8 @@ defmodule PromoMarketWeb.ProductLive.Index do
     updated_socket =
       socket
       |> assign(basket_items: %{})
+      |> assign(basket: nil)
+      |> assign(create_new_order: false)
       |> stream(:products, Catalog.list_products())
 
     {:ok, updated_socket}
@@ -44,10 +46,12 @@ defmodule PromoMarketWeb.ProductLive.Index do
 
     {:ok, new_basket_item} = Market.new_basket_item(params)
     processed_basket_item = Checkout.process_basket_item(new_basket_item)
+    updated_basket_items = Map.put(basket_items, product.code, processed_basket_item)
 
     socket =
       socket
-      |> assign(basket_items: Map.put(basket_items, product.code, processed_basket_item))
+      |> assign(basket_items: updated_basket_items)
+      |> assign(basket: Checkout.process_basket_from_items(updated_basket_items))
       |> stream(:products, Catalog.list_products())
 
     {:noreply, socket}
@@ -66,9 +70,14 @@ defmodule PromoMarketWeb.ProductLive.Index do
     socket =
       socket
       |> assign(basket_items: updated_basket_items)
+      |> assign(basket: Checkout.process_basket_from_items(updated_basket_items))
       |> stream(:products, Catalog.list_products())
 
     {:noreply, socket}
+  end
+
+  def handle_event("create_new_order", _, socket) do
+    {:noreply, assign(socket, create_new_order: true)}
   end
 
   def already_in_basket?(basket_items, product_code) do

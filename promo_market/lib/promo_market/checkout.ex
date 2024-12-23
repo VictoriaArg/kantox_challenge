@@ -46,7 +46,17 @@ defmodule PromoMarket.Checkout do
       total_with_discount: total_with_discount
     }
 
-    Market.new_basket(attrs)
+    {:ok, basket} = Market.new_basket(attrs)
+    basket
+  end
+
+  @spec parse_items(map()) :: map()
+  defp parse_items(items) do
+    items
+    |> Enum.map(fn {key, %BasketItem{amount: amount}} ->
+      {key, amount}
+    end)
+    |> Enum.into(%{})
   end
 
   @spec calculate_basket_totals(map()) :: map()
@@ -82,29 +92,5 @@ defmodule PromoMarket.Checkout do
 
       Market.update_basket_item(item, attrs)
     end
-  end
-
-  @doc """
-    Parses a map with items {"product_code", %BasketItem{}} into the map format
-    for the products field of a Basket.
-
-      ## Examples
-
-      iex> parse_items(%{
-             "AER123" => %BasketItem{amount: 3, ...},
-             "AER1" => %BasketItem{amount: 2, ...}
-           })
-      iex> %{
-         {"AER123", 3},
-         {"AER1", 2}
-       }
-  """
-  @spec parse_items(map()) :: map()
-  def parse_items(items) do
-    items
-    |> Enum.map(fn {key, %BasketItem{amount: amount}} ->
-      {key, amount}
-    end)
-    |> Enum.into(%{})
   end
 end
