@@ -43,18 +43,41 @@ defmodule PromoMarket.Sales.DiscountStrategy do
       %{amount: 3, total_with_discount: Money.new(27_00, :GBP)}
 
   """
-  @spec apply(atom(), integer(), Money.Ecto.Composite.Type) :: map()
-  def apply(code, amount, price) when code in @extra_units_strategy_codes do
-    new_amount = amount + @extra_units_strategy[code]
+  def apply(code, price, amount, applied_promo) when code in @extra_units_strategy_codes do
+    price_for_amount = Money.multiply(price, amount)
+    discount = Money.multiply(price, @extra_units_strategy[code])
 
-    %{
-      amount: new_amount,
-      total_with_discount: Money.multiply(price, amount)
-    }
+    if is_nil(applied_promo) do
+      new_amount = amount + @extra_units_strategy[code]
+
+      %{
+        amount: new_amount,
+        total: Money.multiply(price, new_amount),
+        total_with_discount: price_for_amount,
+        applied_promo: code
+      }
+    else
+      with_discount = Money.subtract(price_for_amount, discount)
+
+      total_with_discount =
+        if Money.zero?(with_discount) do
+          price
+        else
+          with_discount
+        end
+
+      %{
+        amount: amount,
+        total: price_for_amount,
+        total_with_discount: total_with_discount,
+        applied_promo: applied_promo
+      }
+    end
   end
 
-  def apply(code, amount, price) when code in @price_reduction_strategy_codes do
+  def apply(code, price, amount, _applied_promo) when code in @price_reduction_strategy_codes do
     value = @price_reduction_strategy[code]
+    price_for_amount = Money.multiply(price, amount)
 
     price_with_discount =
       cond do
@@ -64,7 +87,9 @@ defmodule PromoMarket.Sales.DiscountStrategy do
 
     %{
       amount: amount,
-      total_with_discount: Money.multiply(price_with_discount, amount)
+      total: price_for_amount,
+      total_with_discount: Money.multiply(price_with_discount, amount),
+      applied_promo: code
     }
   end
 

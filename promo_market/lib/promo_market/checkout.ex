@@ -19,17 +19,8 @@ defmodule PromoMarket.Checkout do
       {:ok, %BasketItem{amount: 3, total: Money.new(30, :USD), total_with_discount: Money.new(27, :USD)}}
   """
   @spec process_basket_item(map()) :: PromoMarket.Market.BasketItem.t()
-  def process_basket_item(%{product_id: _product_id, amount: amount, price: price} = params) do
-    %{amount: new_amount, total_with_discount: total_with_discount} =
-      calculate_total_with_discount(params)
-
-    attrs = %{
-      amount: new_amount,
-      total: Money.multiply(price, amount),
-      total_with_discount: total_with_discount
-    }
-
-    Market.new_basket_item(attrs)
+  def process_basket_item(%BasketItem{} = item) do
+    maybe_apply_promo(item)
   end
 
   @doc """
@@ -58,18 +49,8 @@ defmodule PromoMarket.Checkout do
     Market.new_basket(attrs)
   end
 
-  @doc """
-  Calculates the total and total_with_discount for all items in the basket.
-
-  ## Examples
-      iex> calculate_basket_totals(%{
-             "AER123" => %BasketItem{total: Money.new(10, :USD), total_with_discount: Money.new(9, :USD)},
-             "AER1" => %BasketItem{total: Money.new(20, :USD), total_with_discount: Money.new(18, :USD)}
-           })
-      %{total: Money.new(30, :USD), total_with_discount: Money.new(27, :USD)}
-  """
   @spec calculate_basket_totals(map()) :: map()
-  def calculate_basket_totals(items) do
+  defp calculate_basket_totals(items) do
     initial_acc = %{total: Money.new(0), total_with_discount: Money.new(0)}
 
     Enum.reduce(items, initial_acc, fn {_code, item}, acc ->
@@ -80,26 +61,26 @@ defmodule PromoMarket.Checkout do
     end)
   end
 
-  @doc """
-  Calculates discount for a single basket item.
-
-  If there is a promo available for the item the discount gets applied,
-  if not the total_with_discount will be calculated as a normal total.
-
-  ## Examples
-      iex> calculate_total_with_discount(%{product_id: 1, amount: 3, price: Money.new(10, :USD)})
-      %{amount: 3, total_with_discount: Money.new(27, :USD)}
-  """
-  @spec calculate_total_with_discount(map()) :: map()
-  def calculate_total_with_discount(
-        %{product_id: product_id, amount: amount, price: price} = params
-      ) do
+  defp maybe_apply_promo(
+         %BasketItem{
+           product_id: product_id,
+           amount: amount,
+           price: price,
+           applied_promo: applied_promo
+         } = item
+       ) do
     promo = Sales.get_active_promo_by_product_id(product_id)
 
-    if promo != nil && Sales.applies_for_promo?(promo, params) do
-      DiscountStrategy.apply(promo.discount_strategy, amount, price)
+    if promo != nil && Sales.applies_for_promo?(promo, item) do
+      attrs = DiscountStrategy.apply(promo.discount_strategy, price, amount, applied_promo)
+      Market.update_basket_item(item, attrs)
     else
-      %{amount: amount, total_with_discount: Money.multiply(price, amount)}
+      attrs = %{
+        total_with_discount: Money.multiply(price, amount),
+        total: Money.multiply(price, amount)
+      }
+
+      Market.update_basket_item(item, attrs)
     end
   end
 

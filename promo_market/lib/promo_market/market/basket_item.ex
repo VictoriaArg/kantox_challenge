@@ -7,8 +7,10 @@ defmodule PromoMarket.Market.BasketItem do
   use Ecto.Schema
   import Ecto.Changeset
   alias PromoMarket.Utils
+  alias PromoMarket.Sales.DiscountStrategy
 
-  @basket_fields [:amount, :total, :total_with_discount]
+  @required_fields [:product_id, :name, :amount, :price]
+  @other_fields [:total, :total_with_discount, :applied_promo]
 
   @type t() :: %__MODULE__{
           amount: integer(),
@@ -18,9 +20,13 @@ defmodule PromoMarket.Market.BasketItem do
 
   @primary_key false
   schema "basket_items" do
+    field :product_id, :integer
+    field :name, :string
+    field :price, Money.Ecto.Composite.Type
     field :amount, :integer
     field :total, Money.Ecto.Composite.Type
     field :total_with_discount, Money.Ecto.Composite.Type
+    field :applied_promo, Ecto.Enum, values: DiscountStrategy.strategies_codes()
   end
 
   @doc """
@@ -28,10 +34,9 @@ defmodule PromoMarket.Market.BasketItem do
   """
   def changeset(basket, attrs \\ %{}) do
     basket
-    |> cast(attrs, @basket_fields)
-    |> validate_required(@basket_fields)
+    |> cast(attrs, @required_fields ++ @other_fields)
+    |> validate_required(@required_fields)
     |> validate_number(:amount, greater_than: 0)
-    |> Utils.validate_money(:total)
-    |> Utils.validate_money(:total_with_discount)
+    |> Utils.validate_money(:price)
   end
 end

@@ -128,12 +128,33 @@ defmodule PromoMarket.Market do
       iex> new_basket(attrs)
       {:ok, %Basket{}}
 
-      iex> new_basket(%{})
+      iex> new_basket(%{total: "random_string"})
       {:error, changeset}
 
   """
   def new_basket(attrs) do
-    changeset = validate_basket(%Basket{}, attrs)
+    changeset = validate_basket(attrs)
+
+    case changeset.valid? do
+      true -> {:ok, Changeset.apply_changes(changeset)}
+      _ -> {:error, changeset.errors}
+    end
+  end
+
+  @doc """
+  Returns a new basket struct.
+
+  ## Examples
+
+      iex> update_basket(basket, attrs)
+      {:ok, %Basket{}}
+
+      iex> update_basket(basket, %{total: "random_string"})
+      {:error, changeset}
+
+  """
+  def update_basket(%Basket{} = basket, attrs) do
+    changeset = validate_basket(basket, attrs)
 
     case changeset.valid? do
       true -> {:ok, Changeset.apply_changes(changeset)}
@@ -162,7 +183,7 @@ defmodule PromoMarket.Market do
       iex> new_basket_item(attrs)
       {:ok, %BasketItem{}}
 
-      iex> new_basket_item(%{})
+      iex> new_basket_item(%{amount: -1})
       {:error, changeset}
 
   """
@@ -171,6 +192,27 @@ defmodule PromoMarket.Market do
 
     case changeset.valid? do
       true -> {:ok, Changeset.apply_changes(changeset)}
+      _ -> {:error, changeset.errors}
+    end
+  end
+
+  @doc """
+  Returns a new basket item struct.
+
+  ## Examples
+
+      iex> update_basket_item(basket_item, attrs)
+      {:ok, %BasketItem{}}
+
+      iex> update_basket_item(basket_item, %{amount: -1})
+      {:error, changeset}
+
+  """
+  def update_basket_item(basket_item, attrs) do
+    changeset = validate_basket_item(basket_item, attrs)
+
+    case changeset.valid? do
+      true -> Changeset.apply_changes(changeset)
       _ -> {:error, changeset.errors}
     end
   end
