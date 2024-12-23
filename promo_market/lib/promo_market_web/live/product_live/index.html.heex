@@ -1,26 +1,59 @@
-<.header>
-  Listing Products
-</.header>
+<div class="flex items-start gap-32">
+  <div id="products-section" class="bg-slate-100 rounded-2xl p-12">
+    <.header>
+      Listing Products
+    </.header>
 
-<.table id="products" rows={@streams.products}>
-  <:col :let={{_id, product}} label="Name">{product.name}</:col>
-  <:col :let={{_id, product}} label="Code">{product.code}</:col>
-  <:col :let={{_id, product}} label="Price">{product.price}</:col>
-  <:col :let={{_id, product}} label="Stock">{product.stock}</:col>
-  <:col :let={{_id, product}} label="Description">{product.description}</:col>
-  <:col :let={{_id, product}} label="Image upload">
-    <img class="w-12 h-auto" src={product.image_upload} />
-  </:col>
-  <:action :let={{id, product}}>
-    <.button phx-click="add_new_product">
-      Add to basket
-    </.button>
-  </:action>
-</.table>
-<.link patch={~p"/new_order"}>
+    <.table id="products" rows={@streams.products}>
+      <:col :let={{_id, product}} label="Name">{product.name}</:col>
+      <:col :let={{_id, product}} label="Code">{product.code}</:col>
+      <:col :let={{_id, product}} label="Price">{product.price}</:col>
+      <:col :let={{_id, product}} label="Stock">{product.stock}</:col>
+      <:col :let={{_id, product}} label="Description">{product.description}</:col>
+      <:col :let={{_id, product}} label="Image upload">
+        <img class="w-12 h-auto" src={product.image_upload} />
+      </:col>
+      <:action :let={{_id, product}}>
+        <div class="gap-4 w-32 -mt-6 -ml-6">
+          <%= if already_in_basket?(@basket_items, product.code) do %>
+            <.button
+              phx-click="update_item_amount"
+              phx-value-code={product.code}
+              phx-value-action="subtract"
+            >
+              -
+            </.button>
+            <.button
+              phx-click="update_item_amount"
+              phx-value-code={product.code}
+              phx-value-action="add"
+            >
+              +
+            </.button>
+          <% else %>
+            <.button phx-click="new_basket_item" phx-value-id={product.id} class="text-xs">
+              Add to basket
+            </.button>
+          <% end %>
+        </div>
+      </:action>
+    </.table>
+    <%!-- <.link patch={~p"/new_order"}>
   <.button>New Order</.button>
-</.link>
-
+</.link> --%>
+  </div>
+  <div id="basket-section" class="w-[40%]">
+    <%= for {_code, item} <- @basket_items do %>
+      <p>{item.name}</p>
+      <p>{item.amount}</p>
+      TOTAL
+      <p>{item.total}</p>
+      TOTAL CON DESCUENTO
+      <p>{item.total_with_discount}</p>
+      <p>{item.applied_promo}</p>
+    <% end %>
+  </div>
+</div>
 <.modal :if={@live_action in [:new]} id="order-modal" show on_cancel={JS.patch(~p"/")}>
   <.live_component
     module={PromoMarketWeb.OrderLive.FormComponent}

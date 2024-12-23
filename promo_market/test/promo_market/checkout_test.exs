@@ -93,13 +93,13 @@ defmodule PromoMarket.CheckoutTest do
     }
   end
 
-  describe "process_basket_item/1" do
-    test "processes a basket item and applies promo to products with promo", %{
+  describe "process_item/1" do
+    test "processes an item and applies promo to products with promo", %{
       products: products
     } do
       for product <- products do
         params = %{product_id: product.id, amount: 3, price: product.price}
-        assert {:ok, %BasketItem{} = item} = Checkout.process_basket_item(params)
+        assert {:ok, %BasketItem{} = item} = Checkout.process_item(params)
 
         case product.code do
           ## should not apply any discount
