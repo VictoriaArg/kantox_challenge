@@ -5,6 +5,6 @@ defmodule PromoMarketWeb.PageControllerTest do
     conn = get(conn, ~p"/")
 
     assert html_response(conn, 200) =~
-             "Listing Products"
+             "List of products"
   end
 end

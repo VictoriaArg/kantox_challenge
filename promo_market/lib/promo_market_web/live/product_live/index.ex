@@ -25,7 +25,7 @@ defmodule PromoMarketWeb.ProductLive.Index do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Products")
+    |> assign(:page_title, "List of products")
   end
 
   @impl true

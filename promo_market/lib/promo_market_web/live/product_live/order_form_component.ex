@@ -9,8 +9,8 @@ defmodule PromoMarketWeb.OrderLive.FormComponent do
         Order Form
         <:subtitle>
           <p>Thank you for reviewing my challenge submit.
-            I know there is so much to improve, and many more cases to test, but this is what I was able to do in the given time.
-            Hope to hear from you soon!</p>
+            Hope that we can develop the greatest features in 2025.
+            Merry Christmas and happy new year!</p>
           <br />
           <p class="mt-2">Best regards,</p>
         </:subtitle>
