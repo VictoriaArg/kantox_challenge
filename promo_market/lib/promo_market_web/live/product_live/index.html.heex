@@ -66,7 +66,11 @@
     </div>
     <%= if !is_nil(@basket) && !Money.zero?(@basket.total) do %>
       <div id="basket" class="mt-6 pt-2 border-slate-200 border-t-2 w-full">
-        <p class="font-bold leading-6 mt-4 mb-2">Total items: {map_size(@basket.products)}</p>
+        <p class="font-bold leading-6 mt-4 mb-2">
+          Added products: ({Enum.reduce(@basket.products, 0, fn {_key, value}, acc ->
+            acc + value
+          end)})
+        </p>
         Total:
         <p class="inline leading-6 font-bold mb-2">{@basket.total}</p>
         <div class="mb-6">
