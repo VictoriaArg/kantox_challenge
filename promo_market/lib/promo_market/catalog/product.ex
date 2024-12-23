@@ -9,6 +9,18 @@ defmodule PromoMarket.Catalog.Product do
 
   @code_regex ~r/^[A-Z]{0,3}[a-zA-Z]*\d{0,3}$/
 
+  @type t() :: %__MODULE__{
+          id: Ecto.UUID.t(),
+          code: String.t(),
+          name: String.t(),
+          description: String.t(),
+          price: Money.t(),
+          stock: integer(),
+          image_upload: String.t(),
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t()
+        }
+
   schema "products" do
     field :code, :string
     field :name, :string

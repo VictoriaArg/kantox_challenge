@@ -53,7 +53,7 @@ defmodule PromoMarket.Sales do
       iex> get_active_promo_by_product_id("false_uuid")
       nil
   """
-  @spec get_active_promo_by_product_id(Ecto.UUID.t()) :: Promo.t() | nil
+  @spec get_active_promo_by_product_id(Ecto.UUID.t()) :: PromoMarket.Sales.Promo.t() | nil
   def get_active_promo_by_product_id(product_id) do
     Promo.active_promo_query(product_id)
     |> Repo.one()
@@ -142,16 +142,16 @@ defmodule PromoMarket.Sales do
 
   ## Examples
 
-      iex> applies_for_promo?(promo, %{product_id: 123, amount: 5})
+      iex> applies_for_promo?(%Promo{min_units: 3, product_id: 123}, %{product_id: 123, amount: 5})
       true
 
-      iex> applies_for_promo?(promo, %{product_id: 123, amount: 1})
+      iex> applies_for_promo?(%Promo{min_units: 3, product_id: 456}, %{product_id: 123, amount: 1})
       false
 
   """
   @spec applies_for_promo?(Promo.t(), map()) :: boolean()
   def applies_for_promo?(%Promo{} = promo, %{product_id: product_id, amount: amount})
-      when promo.product_id == product_id and promo.min_units >= amount,
+      when promo.product_id == product_id and amount >= promo.min_units,
       do: true
 
   def applies_for_promo?(_, _), do: false

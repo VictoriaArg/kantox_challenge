@@ -9,6 +9,12 @@ defmodule PromoMarket.Market.Basket do
 
   @basket_fields [:products, :total, :total_with_discount]
 
+  @type t() :: %__MODULE__{
+          products: map(),
+          total: Money.t(),
+          total_with_discount: Money.t()
+        }
+
   @primary_key false
   schema "baskets" do
     field :products, :map

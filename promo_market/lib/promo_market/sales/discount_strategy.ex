@@ -14,8 +14,8 @@ defmodule PromoMarket.Sales.DiscountStrategy do
   }
 
   @price_reduction_strategy %{
-    bulk_fixed_price_drop: Money.new(0_5, :GBP),
-    bulk_percentage_price_drop: 0.66
+    bulk_fixed_price_drop: Money.new(50, :GBP),
+    bulk_percentage_price_drop: 2 / 3
   }
 
   @doc """

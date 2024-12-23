@@ -27,11 +27,11 @@ defmodule PromoMarket.Sales.DiscountStrategyTest do
 
   describe "apply/3 with price reduction strategies" do
     test "applies bulk_fixed_price_drop strategy" do
-      result = DiscountStrategy.apply(:bulk_fixed_price_drop, 3, Money.new(11_3, :GBP))
+      result = DiscountStrategy.apply(:bulk_fixed_price_drop, 3, Money.new(113, :GBP))
 
       assert result == %{
                amount: 3,
-               total_with_discount: Money.new(324, :GBP)
+               total_with_discount: Money.new(189, :GBP)
              }
     end
 
@@ -40,7 +40,7 @@ defmodule PromoMarket.Sales.DiscountStrategyTest do
 
       assert result == %{
                amount: 3,
-               total_with_discount: Money.new(198, :GBP)
+               total_with_discount: Money.new(201, :GBP)
              }
     end
   end

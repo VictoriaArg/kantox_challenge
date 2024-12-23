@@ -18,6 +18,19 @@ defmodule PromoMarket.Market.Order do
     :delivery_date
   ]
 
+  @type t() :: %__MODULE__{
+          id: Ecto.UUID.t(),
+          total: Money.t(),
+          total_with_discount: Money.t(),
+          state: atom(),
+          address: String.t(),
+          products: map(),
+          recipient: String.t(),
+          delivery_date: DateTime.t(),
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t()
+        }
+
   schema "orders" do
     field :total, Money.Ecto.Composite.Type
     field :total_with_discount, Money.Ecto.Composite.Type

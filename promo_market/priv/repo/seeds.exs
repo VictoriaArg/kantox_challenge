@@ -10,7 +10,7 @@ if Mix.env() != :test do
       code: "CF1",
       name: "Arabica Coffee",
       description: "Arabica Coffee beans 250 grams",
-      price: Money.new(11_23, :GBP),
+      price: Money.new(1123, :GBP),
       stock: 45,
       image_upload:
         "https://kantoxchallenge.s3.us-east-1.amazonaws.com/products-images/coffee.jpg"
@@ -19,7 +19,7 @@ if Mix.env() != :test do
       code: "SR1",
       name: "Strawberry",
       description: "Strawberry",
-      price: Money.new(5_00, :GBP),
+      price: Money.new(500, :GBP),
       stock: 324,
       image_upload:
         "https://kantoxchallenge.s3.us-east-1.amazonaws.com/products-images/strawberry.jpg"
@@ -28,7 +28,7 @@ if Mix.env() != :test do
       code: "GR1",
       name: "Green Tea",
       description: "Chinese Green Tea",
-      price: Money.new(3_11, :GBP),
+      price: Money.new(311, :GBP),
       stock: 61,
       image_upload:
         "https://kantoxchallenge.s3.us-east-1.amazonaws.com/products-images/green_tea.jpg"
@@ -55,7 +55,7 @@ if Mix.env() != :test do
       min_units: 1
     },
     %{
-      name: "challenge_promo",
+      name: "challenge_promo_fixed_price_drop",
       active: true,
       discount_strategy: :bulk_fixed_price_drop,
       expiration_date: expiration_date,
@@ -63,7 +63,7 @@ if Mix.env() != :test do
       min_units: 3
     },
     %{
-      name: "challenge_promo",
+      name: "challenge_promo_percentage_price_drop",
       active: true,
       discount_strategy: :bulk_percentage_price_drop,
       expiration_date: expiration_date,

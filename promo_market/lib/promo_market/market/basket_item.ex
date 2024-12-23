@@ -10,6 +10,12 @@ defmodule PromoMarket.Market.BasketItem do
 
   @basket_fields [:amount, :total, :total_with_discount]
 
+  @type t() :: %__MODULE__{
+          amount: integer(),
+          total: Money.t(),
+          total_with_discount: Money.t()
+        }
+
   @primary_key false
   schema "basket_items" do
     field :amount, :integer

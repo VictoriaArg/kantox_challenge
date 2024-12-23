@@ -16,6 +16,16 @@ defmodule PromoMarket.Sales.Promo do
     :min_units
   ]
 
+  @type t() :: %__MODULE__{
+          id: integer(),
+          name: String.t(),
+          active: boolean(),
+          discount_strategy: String.t(),
+          expiration_date: DateTime.t(),
+          product_id: integer(),
+          min_units: integer()
+        }
+
   schema "promos" do
     field :active, :boolean, default: false
     field :name, :string
