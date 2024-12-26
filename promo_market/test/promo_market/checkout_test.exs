@@ -2,51 +2,26 @@ defmodule PromoMarket.CheckoutTest do
   use PromoMarket.DataCase
 
   alias PromoMarket.Catalog
+  alias PromoMarket.CatalogFixtures
   alias PromoMarket.Checkout
   alias PromoMarket.Sales
+  alias PromoMarket.SalesFixtures
   alias PromoMarket.Market
   alias PromoMarket.Market.{BasketItem, Basket}
   alias Money
 
   setup do
-    products_attrs = [
-      %{
-        code: "CF1",
-        name: "Arabica Coffee",
-        description: "Arabica Coffee beans 250 grams",
-        price: Money.new(1123, :GBP),
-        stock: 45,
-        image_upload:
-          "https://kantoxchallenge.s3.us-east-1.amazonaws.com/products-images/coffee.jpg"
-      },
-      %{
-        code: "SR1",
-        name: "Strawberry",
-        description: "Strawberry",
-        price: Money.new(500, :GBP),
-        stock: 324,
-        image_upload:
-          "https://kantoxchallenge.s3.us-east-1.amazonaws.com/products-images/strawberry.jpg"
-      },
-      %{
-        code: "GR1",
-        name: "Green Tea",
-        description: "Chinese Green Tea",
-        price: Money.new(311, :GBP),
-        stock: 61,
-        image_upload:
-          "https://kantoxchallenge.s3.us-east-1.amazonaws.com/products-images/green_tea.jpg"
-      },
-      %{
-        code: "ASD123",
-        name: "Mistery Box",
-        description: "A mistery box that could contain anything",
-        price: Money.new(999_999, :GBP),
-        stock: 61,
-        image_upload:
-          "https://kantoxchallenge.s3.us-east-1.amazonaws.com/products-images/green_tea.jpg"
-      }
-    ]
+    extra_product = %{
+      code: "ASD123",
+      name: "Mistery Box",
+      description: "A mistery box that could contain anything",
+      price: Money.new(999_999, :GBP),
+      stock: 61,
+      image_upload:
+        "https://kantoxchallenge.s3.us-east-1.amazonaws.com/products-images/green_tea.jpg"
+    }
+
+    products_attrs = CatalogFixtures.default_products_attrs() ++ [extra_product]
 
     [_mistery_box, green_tea, strawberry, coffee] =
       products =
@@ -55,41 +30,11 @@ defmodule PromoMarket.CheckoutTest do
         List.insert_at(acc, 0, product)
       end)
 
-    expiration_date =
-      DateTime.utc_now()
-      |> DateTime.add(10, :day)
-
-    promos = [
-      %{
-        name: "challenge_promo",
-        active: true,
-        discount_strategy: :buy_one_get_one_free,
-        expiration_date: expiration_date,
-        product_id: green_tea.id,
-        min_units: 1
-      },
-      %{
-        name: "challenge_promo_fixed_price_drop",
-        active: true,
-        discount_strategy: :bulk_fixed_price_drop,
-        expiration_date: expiration_date,
-        product_id: strawberry.id,
-        min_units: 3
-      },
-      %{
-        name: "challenge_promo_percentage_price_drop",
-        active: true,
-        discount_strategy: :bulk_percentage_price_drop,
-        expiration_date: expiration_date,
-        product_id: coffee.id,
-        min_units: 3
-      }
-    ]
+    promos = SalesFixtures.default_promos_params(green_tea.id, strawberry.id, coffee.id)
 
     Enum.each(promos, fn attrs -> Sales.create_promo(attrs) end)
 
     %{
-      promos: promos,
       products: products
     }
   end

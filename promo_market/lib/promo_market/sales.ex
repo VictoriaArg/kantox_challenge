@@ -53,7 +53,6 @@ defmodule PromoMarket.Sales do
       iex> get_active_promo_by_product_id("false_uuid")
       nil
   """
-  @spec get_active_promo_by_product_id(Ecto.UUID.t()) :: PromoMarket.Sales.Promo.t() | nil
   def get_active_promo_by_product_id(product_id) do
     Promo.active_promo_query(product_id)
     |> Repo.one()

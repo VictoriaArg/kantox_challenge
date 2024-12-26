@@ -25,4 +25,36 @@ defmodule PromoMarket.CatalogFixtures do
 
     product
   end
+
+  def default_products_attrs() do
+    [
+      %{
+        code: "CF1",
+        name: "Arabica Coffee",
+        description: "Arabica Coffee beans 250 grams",
+        price: Money.new(1123, :GBP),
+        stock: 45,
+        image_upload:
+          "https://kantoxchallenge.s3.us-east-1.amazonaws.com/products-images/coffee.jpg"
+      },
+      %{
+        code: "SR1",
+        name: "Strawberry",
+        description: "Strawberry",
+        price: Money.new(500, :GBP),
+        stock: 324,
+        image_upload:
+          "https://kantoxchallenge.s3.us-east-1.amazonaws.com/products-images/strawberry.jpg"
+      },
+      %{
+        code: "GR1",
+        name: "Green Tea",
+        description: "Chinese Green Tea",
+        price: Money.new(311, :GBP),
+        stock: 61,
+        image_upload:
+          "https://kantoxchallenge.s3.us-east-1.amazonaws.com/products-images/green_tea.jpg"
+      }
+    ]
+  end
 end
