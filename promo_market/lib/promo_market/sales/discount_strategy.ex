@@ -43,47 +43,47 @@ defmodule PromoMarket.Sales.DiscountStrategy do
       %{amount: 3, total_with_discount: Money.new(27_00, :GBP)}
 
   """
+  def apply(code, price, amount, applied_promo)
+      when code in @extra_units_strategy_codes and is_nil(applied_promo) do
+    price_for_amount = Money.multiply(price, amount)
+    discount = Money.multiply(price, @extra_units_strategy[code])
+
+    new_amount = amount + @extra_units_strategy[code]
+
+    %{
+      amount: new_amount,
+      total: Money.multiply(price, new_amount),
+      total_with_discount: price_for_amount,
+      applied_promo: code
+    }
+  end
+
   def apply(code, price, amount, applied_promo) when code in @extra_units_strategy_codes do
     price_for_amount = Money.multiply(price, amount)
     discount = Money.multiply(price, @extra_units_strategy[code])
 
-    if is_nil(applied_promo) do
-      new_amount = amount + @extra_units_strategy[code]
+    with_discount = Money.subtract(price_for_amount, discount)
 
-      %{
-        amount: new_amount,
-        total: Money.multiply(price, new_amount),
-        total_with_discount: price_for_amount,
-        applied_promo: code
-      }
-    else
-      with_discount = Money.subtract(price_for_amount, discount)
+    total_with_discount =
+      if Money.zero?(with_discount) do
+        price
+      else
+        with_discount
+      end
 
-      total_with_discount =
-        if Money.zero?(with_discount) do
-          price
-        else
-          with_discount
-        end
-
-      %{
-        amount: amount,
-        total: price_for_amount,
-        total_with_discount: total_with_discount,
-        applied_promo: applied_promo
-      }
-    end
+    %{
+      amount: amount,
+      total: price_for_amount,
+      total_with_discount: total_with_discount,
+      applied_promo: applied_promo
+    }
   end
 
   def apply(code, price, amount, _applied_promo) when code in @price_reduction_strategy_codes do
-    value = @price_reduction_strategy[code]
+    discount_value = @price_reduction_strategy[code]
     price_for_amount = Money.multiply(price, amount)
 
-    price_with_discount =
-      cond do
-        is_float(value) -> Money.multiply(price, value)
-        %Money{} = value -> Money.subtract(price, value)
-      end
+    price_with_discount = price_with_discount(discount_value, price)
 
     %{
       amount: amount,
@@ -94,4 +94,11 @@ defmodule PromoMarket.Sales.DiscountStrategy do
   end
 
   def apply(_, _, _), do: raise(ArgumentError, "Invalid code provided!")
+
+  defp price_with_discount(discount_value, price) do
+    cond do
+      is_float(discount_value) -> Money.multiply(price, discount_value)
+      %Money{} = discount_value -> Money.subtract(price, discount_value)
+    end
+  end
 end
