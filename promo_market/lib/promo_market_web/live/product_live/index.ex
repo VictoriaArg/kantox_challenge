@@ -103,4 +103,8 @@ defmodule PromoMarketWeb.ProductLive.Index do
 
   defp update_amount(amount, "add"), do: amount + 1
   defp update_amount(amount, "subtract"), do: amount - 1
+
+  defp has_discount?(total, total_with_discount) do
+    !Money.zero?(Money.subtract(total, total_with_discount))
+  end
 end

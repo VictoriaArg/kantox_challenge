@@ -74,7 +74,7 @@
         Total:
         <p class="inline leading-6 font-bold mb-2">{@basket.total}</p>
         <div class="mb-6">
-          <%= if !Money.zero?(Money.subtract(@basket.total, @basket.total_with_discount)) do %>
+          <%= if has_discount?(@basket.total, @basket.total_with_discount) do %>
             Total with dicount:
             <p class="inline font-semibold leading-6 text-emerald-700">
               {@basket.total_with_discount}

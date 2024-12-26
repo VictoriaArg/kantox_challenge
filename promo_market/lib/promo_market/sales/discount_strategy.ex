@@ -46,8 +46,6 @@ defmodule PromoMarket.Sales.DiscountStrategy do
   def apply(code, price, amount, applied_promo)
       when code in @extra_units_strategy_codes and is_nil(applied_promo) do
     price_for_amount = Money.multiply(price, amount)
-    discount = Money.multiply(price, @extra_units_strategy[code])
-
     new_amount = amount + @extra_units_strategy[code]
 
     %{
