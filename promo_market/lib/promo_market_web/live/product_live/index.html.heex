@@ -17,6 +17,7 @@
         <div class="gap-4 w-32 -mt-6 -ml-6">
           <%= if already_in_basket?(@basket_items, product.code) do %>
             <.button
+              id={"#{product.code}-subtract"}
               phx-click="update_item_amount"
               phx-value-code={product.code}
               phx-value-action="subtract"
@@ -24,6 +25,7 @@
               -
             </.button>
             <.button
+              id={"#{product.code}-add"}
               phx-click="update_item_amount"
               phx-value-code={product.code}
               phx-value-action="add"
@@ -31,7 +33,12 @@
               +
             </.button>
           <% else %>
-            <.button phx-click="new_basket_item" phx-value-id={product.id} class="text-xs">
+            <.button
+              id={"#{product.code}-add-new"}
+              phx-click="new_basket_item"
+              phx-value-id={product.id}
+              class="text-xs"
+            >
               Add to basket
             </.button>
           <% end %>
@@ -81,7 +88,7 @@
             </p>
           <% end %>
         </div>
-        <.button phx-click="create_new_order">Create new order</.button>
+        <.button id="create-order" phx-click="create_new_order">Create new order</.button>
       </div>
     <% end %>
   </div>
