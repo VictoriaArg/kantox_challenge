@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :promo_market, PromoMarket.Repo,
   username: "postgres",
-  password: "394ERoHWgveELK",
+  password: "postgres",
   hostname: "localhost",
   database: "promo_market_dev",
   stacktrace: true,
